@@ -1,0 +1,67 @@
+version: '3.7'
+
+services:    
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: matcher_rabbitmq
+    restart: unless-stopped
+    volumes:
+      - ./rabbitmq/etc/definitions.json:/etc/rabbitmq/definitions.json #cloud_user, cloud_user
+      - ./rabbitmq/etc/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq/data:/var/lib/rabbitmq/mnesia/rabbit@matcher_rabbitmq
+      - ./rabbitmq/logs:/var/log/rabbitmq/log
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      - ./.env.dev
+    environment:
+      - TZ=America/Bogota
+      
+  api:
+    # image: cloud_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: sh -c "uvicorn main:app --reload --host 0.0.0.0 --port 8080"
+#    restart: unless-stopped
+    volumes:
+      - ./:/usr/src/dsc_app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+          - rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"
+    environment:
+      - TZ=America/Bogota
+    cpus: 1
+    mem_limit: 1150m
+    ports:
+      - 8080:8080
+
+#   celery:
+#     # image: cloud_app
+#     build:
+#       context: .
+#       dockerfile: ./Dockerfile
+#     command: sh -c "celery --app=celery_manage.celery_init:ranker_app worker -B --without-heartbeat --without-gossip --without-mingle --loglevel=INFO"
+# #    restart: unless-stopped
+#     volumes:
+#       - ./:/usr/src/dsc_app/
+#     env_file:
+#       - ./.env.dev
+#     depends_on:
+#           - rabbitmq
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: 10m
+#         max-file: "3"
+#     environment:
+#       - TZ=America/Bogota
+#     cpus: 1
+#     mem_limit: 1150m
