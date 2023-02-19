@@ -1,0 +1,7 @@
+storage
+rabbitmq/data/*
+rabbitmq/logs/*
+/.vscode
+celerybeat-schedule
+__pycache__/
+postgresql

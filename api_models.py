@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List, Dict, Any, AnyStr, Union
 from fastapi import UploadFile
+from enum import Enum
+from datetime import datetime
 
 class UserSigninPayload(BaseModel):
     user: str
@@ -22,14 +24,17 @@ class SuccessResponse(BaseModel):
     success: bool
     message: Optional[str] = None
 
+class Status(str, Enum):
+    UPLOADED = 'uploaded'
+    PROCESSED = 'processed'
+
 class TaskObject(BaseModel):
     task_id: int
     original_file_name: str
     original_file_ext: str
+    original_stored_file_name: str
     target_file_ext: str
-    finished: bool
-
-class ConvertFilePayload(BaseModel):
-    fileName: UploadFile
-    newFormat: str
+    target_stored_file_name: str
+    uploaded_at: datetime
+    status: Status
     

@@ -1,5 +1,11 @@
-fastapi
-uvicorn
-python-jose
-pydantic[email]
-python-multipart
+aiofiles==23.1.0
+alembic==1.9.4
+email-validator==1.3.1
+fastapi==0.92.0
+psycopg2-binary==2.9.5
+pydantic[email]==1.10.5
+python-jose==3.3.0
+python-multipart==0.0.5
+SQLAlchemy==2.0.4
+starlette==0.25.0
+uvicorn==0.20.0
