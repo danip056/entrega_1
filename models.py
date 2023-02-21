@@ -29,6 +29,6 @@ class Task(Base):
         nullable=False,
         server_default=func.current_timestamp())
     status = Column(
-        Enum("uploaded", "proccessed", name='status_types'),
+        Enum("uploaded", "processed", name='status_types'),
         default="uploaded",
     )
