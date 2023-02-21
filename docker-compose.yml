@@ -56,25 +56,26 @@ services:
     volumes: 
       - ./postgresql/data/:/var/lib/postgresql/data
 
-#   celery:
-#     # image: cloud_app
-#     build:
-#       context: .
-#       dockerfile: ./Dockerfile
-#     command: sh -c "celery --app=celery_manage.celery_init:ranker_app worker -B --without-heartbeat --without-gossip --without-mingle --loglevel=INFO"
-# #    restart: unless-stopped
-#     volumes:
-#       - ./:/usr/src/dsc_app/
-#     env_file:
-#       - ./.env.dev
-#     depends_on:
-#           - rabbitmq
-#     logging:
-#       driver: "json-file"
-#       options:
-#         max-size: 10m
-#         max-file: "3"
-#     environment:
-#       - TZ=America/Bogota
-#     cpus: 1
-#     mem_limit: 1150m
+  celery:
+    # image: cloud_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: sh -c "celery --app=celery_config.celery_init:dsc_app worker -B --without-heartbeat --without-gossip --without-mingle --loglevel=INFO"
+#    restart: unless-stopped
+    volumes:
+      - ./:/usr/src/dsc_app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+          - rabbitmq
+          - db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"
+    environment:
+      - TZ=America/Bogota
+    cpus: 2
+    mem_limit: 1024m

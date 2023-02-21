@@ -20,6 +20,8 @@ from bd_connection import Session
 import os
 from uuid import uuid4
 import aiofiles
+from celery import Celery
+
 
 app = FastAPI(
     title="DSC entrega 1",
@@ -46,6 +48,12 @@ SECRET_KEY = "ultra_secret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 STORAGE_DIR = "storage"
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+
+celery = Celery(
+    broker=CELERY_BROKER_URL,
+    backend="rpc://",
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -151,6 +159,12 @@ async def create_task(file: UploadFile, target_file_ext: str = Body()):
     with Session() as session:
         session.add(task_entry)
         session.commit()
+        id_task = task_entry.id
+
+    celery.send_task(
+        "tasks.process_task",
+        args=[id_task],
+    )
     return {"success": True, "message": "Tarea creada con éxito"}
 
 
@@ -167,8 +181,8 @@ async def list_tasks(max: Optional[int]=None, order: Optional[int]=None):
 
         if max:
             query = query.limit(max)
-
         task_list = query.all()
+
     return [
         {
             "task_id": task.id,
