@@ -125,7 +125,7 @@ async def login(
         try:
             user = query.one()
         except:
-            return {"valid": False}
+            raise HTTPException(status_code=404, detail="Wrong user or password")
     
     if not pwd_context.verify(user_login_payload.password, user.password):
         return {"valid": False}
