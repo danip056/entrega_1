@@ -128,7 +128,7 @@ async def login(
             raise HTTPException(status_code=404, detail="Wrong user or password")
     
     if not pwd_context.verify(user_login_payload.password, user.password):
-        return {"valid": False}
+        raise HTTPException(status_code=404, detail="Wrong user or password")
 
     token = create_access_token({
         "user_id": user.id,
