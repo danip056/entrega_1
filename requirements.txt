@@ -10,3 +10,4 @@ SQLAlchemy==2.0.4
 starlette==0.25.0
 uvicorn==0.20.0
 celery==5.2.7
+passlib==1.7.4
