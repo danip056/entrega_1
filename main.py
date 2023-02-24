@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, Response, status, UploadFile, Body, HTTPEx
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from jose import JWTError, jwt
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, OAuth2PasswordBearer
 from api_models import (
     TokenData,
     LoginResponse,
@@ -21,7 +21,8 @@ import os
 from uuid import uuid4
 import aiofiles
 from celery import Celery
-
+from passlib.context import CryptContext
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 app = FastAPI(
     title="DSC entrega 1",
@@ -55,18 +56,19 @@ celery = Celery(
     backend="rpc://",
 )
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = HTTPBearer()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
-async def get_current_user_id(token: str = Depends(oauth2_scheme)):
+async def get_current_user_id(auth_credentials: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        token = auth_credentials.credentials
         payload = jwt.decode(token, SECRET_KEY)
-        user_id = 1  # payload.get("user_id")
+        user_id = payload.get("user_id")
         if user_id is None:
             raise credentials_exception
         token_data = TokenData(user_id=user_id)
@@ -96,7 +98,7 @@ async def sigin(sigin_payload: UserSigninPayload):
     user_entry =  User(
         user=sigin_payload.user,
         email=sigin_payload.email,
-        password=sigin_payload.password  
+        password=pwd_context.hash(sigin_payload.password)
     )
     with Session() as session:
         session.add(user_entry)
@@ -108,8 +110,21 @@ async def sigin(sigin_payload: UserSigninPayload):
 @app.post("/auth/login", response_model=LoginResponse)
 async def login(
         user_login_payload: UserLoginPayload):
+    with Session() as session:
+        query = session.query(User).where(
+            (User.user==user_login_payload.user_or_email) |
+            (User.email==user_login_payload.user_or_email),
+            )
+        try:
+            user = query.one()
+        except:
+            return {"valid": False}
+    
+    if not pwd_context.verify(user_login_payload.password, user.password):
+        return {"valid": False}
+
     token = create_access_token({
-        "user_id": 1,
+        "user_id": user.id,
     })
     return {
         "valid": True,
@@ -130,8 +145,12 @@ async def save_file(file, path):
         await new_file.write(await file.read())
 
 @app.post("/tasks", response_model=SuccessResponse)
-async def create_task(file: UploadFile, target_file_ext: str = Body()):
-    user_id = 1
+async def create_task(
+    file: UploadFile,
+    target_file_ext: str = Body(),
+    user_id = Depends(get_current_user_id)
+    ):
+
     _, original_file_ext = os.path.splitext(file.filename)
 
     original_stored_file_name = generate_file_name(
@@ -170,8 +189,12 @@ async def create_task(file: UploadFile, target_file_ext: str = Body()):
 
 # 3
 @app.get("/tasks", response_model=List[TaskObject])
-async def list_tasks(max: Optional[int]=None, order: Optional[int]=None):
-    user_id = 1
+async def list_tasks(
+    max: Optional[int]=None,
+    order: Optional[int]=None,
+    user_id = Depends(get_current_user_id)
+    ):
+
     with Session() as session:
         query = session.query(Task).where(Task.user_id==user_id)
         if order == 0:
@@ -200,8 +223,11 @@ async def list_tasks(max: Optional[int]=None, order: Optional[int]=None):
 
 
 @app.get("/tasks/{id_task}", response_model=TaskObject)
-async def list_tasks(id_task: int):
-    user_id = 1
+async def list_tasks(
+    id_task: int,
+    user_id = Depends(get_current_user_id)
+    ):
+
     with Session() as session:
         task = session.query(Task).get(id_task)
 
@@ -221,8 +247,11 @@ async def list_tasks(id_task: int):
 
 
 @app.delete("/tasks/{id_task}", response_model=SuccessResponse)
-async def list_tasks(id_task: int):
-    user_id = 1
+async def list_tasks(
+    id_task: int,
+    user_id = Depends(get_current_user_id)
+    ):
+
     with Session() as session:
         affected_ids = session.query(Task).filter(
             Task.id==id_task, Task.user_id==user_id).delete(
@@ -235,8 +264,11 @@ async def list_tasks(id_task: int):
     return {"success": True, "message": "Task deleted"}
 
 @app.get("/files/{filename}", response_class=FileResponse)
-async def list_tasks(filename: str):
-    user_id = 1
+async def list_tasks(
+    filename: str,
+    user_id = Depends(get_current_user_id)
+    ):
+
     file_base_name, _ = os.path.splitext(filename)
     file_user_id = int(file_base_name.split("_")[-1])
 
