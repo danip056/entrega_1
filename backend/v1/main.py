@@ -31,6 +31,7 @@ from celery import Celery
 from passlib.context import CryptContext
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from pathlib import Path
+from compression import CompressionFormat
 
 app = FastAPI(
     title="DSC entrega 1",
@@ -161,8 +162,13 @@ async def create_task(
     user_id = Depends(get_current_user_id)
     ):
 
-    _, original_file_ext = os.path.splitext(file.filename)
-
+    if file.filename.endswith(CompressionFormat.ZIP.value):
+        original_file_ext = CompressionFormat.ZIP.value
+    elif file.filename.endswith(CompressionFormat.TAR_GZ.value):
+        original_file_ext = CompressionFormat.TAR_GZ.value
+    elif file.filename.endswith(CompressionFormat.TAR_BZ2.value):
+        original_file_ext = CompressionFormat.TAR_BZ2.value
+        
     original_stored_file_name = generate_file_name(
         original_file_ext,
         user_id)
