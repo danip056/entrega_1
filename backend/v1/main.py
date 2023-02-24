@@ -16,6 +16,7 @@ from api_models import (
     UserSigninPayload,
     UserLoginPayload,
     TaskObject,
+    Status,
 )
 from typing import Union, List, Optional
 from datetime import datetime, timedelta
@@ -260,7 +261,9 @@ async def list_tasks(
 
     with Session() as session:
         affected_ids = session.query(Task).filter(
-            Task.id==id_task, Task.user_id==user_id).delete(
+            Task.id==id_task,
+            Task.user_id==user_id,
+            Task.status==Status.PROCESSED.value).delete(
             synchronize_session="fetch"
         )
         if affected_ids != 1:
@@ -275,7 +278,7 @@ async def list_tasks(
     user_id = Depends(get_current_user_id)
     ):
 
-    file_base_name, _ = os.path.splitext(filename)
+    file_base_name, _ = filename.split(".")[-1]
     file_user_id = int(file_base_name.split("_")[-1])
 
     if file_user_id != user_id:
