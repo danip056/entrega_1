@@ -278,9 +278,7 @@ async def list_tasks(
     user_id = Depends(get_current_user_id)
     ):
 
-    print('user id: ', user_id)
     file_base_name = filename.split(".")[0]
-    print(file_base_name)
     file_user_id = int(file_base_name.split("_")[-1])
 
     if file_user_id != user_id:
