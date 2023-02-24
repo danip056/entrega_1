@@ -1,3 +1,9 @@
+import sys
+import os
+sys.path.append(
+    os.path.dirname(__file__)
+)
+
 from celery import shared_task
 from compression import ZipManager, TarGzManager, TarBz2Manager, CompressionFormat
 from bd_connection import Session
@@ -5,7 +11,7 @@ from models import Task
 from api_models import Status
 import os
 
-STORAGE_DIR = "storage"
+STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 
 @shared_task(autoretry_for=(Exception,), max_retries=3 ,default_retry_delay=240, ignore_result=True)
 def process_task(id_task):

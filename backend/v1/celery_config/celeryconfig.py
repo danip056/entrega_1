@@ -1,6 +1,6 @@
 import os
 
-imports = ("tasks",)
+imports = ("v1.tasks",)
 task_serializer = 'json'
 result_accept_content = ['json']
 result_serializer = 'json'

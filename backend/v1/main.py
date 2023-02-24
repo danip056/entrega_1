@@ -1,3 +1,9 @@
+import sys
+import os
+sys.path.append(
+    os.path.dirname(__file__)
+)
+
 from fastapi import FastAPI, Depends, Response, status, UploadFile, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -48,7 +54,7 @@ app.add_middleware(
 SECRET_KEY = "ultra_secret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
-STORAGE_DIR = "storage"
+STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
 celery = Celery(
@@ -181,7 +187,7 @@ async def create_task(
         id_task = task_entry.id
 
     celery.send_task(
-        "tasks.process_task",
+        "v1.tasks.process_task",
         args=[id_task],
     )
     return {"success": True, "message": "Tarea creada con éxito"}

@@ -3,7 +3,7 @@ from celery import Celery
 
 
 dsc_app = Celery('dsc_app')
-dsc_app.config_from_object('celery_config.celeryconfig')
+dsc_app.config_from_object('v1.celery_config.celeryconfig')
 
 
 @dsc_app.task

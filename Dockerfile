@@ -10,6 +10,6 @@ RUN mkdir -p /usr/share/man/man1/ && \
 	apt-get clean;
 
 FROM base_python as app
-COPY ./requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./backend/requirements.txt ./backend/
+RUN pip install --no-cache-dir -r backend/requirements.txt
 COPY ./ ./
