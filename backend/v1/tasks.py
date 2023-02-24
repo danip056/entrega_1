@@ -10,8 +10,92 @@ from bd_connection import Session
 from models import Task
 from api_models import Status
 import os
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
+MAIL_USERNAME = "grupo8cloud@outlook.com"
+MAIL_PASSWORD = "12345678A."
+MAIL_FROM = "grupo8cloud@outlook.com"
+MAIL_PORT = 587
+MAIL_SERVER = "smtp.office365.com"
+MAIL_FROM_NAME="Conversión exitosa"
+MAIL_STARTTLS = True
+MAIL_SSL_TLS = False
+USE_CREDENTIALS = True
+VALIDATE_CERTS = True
+
+
+html_message = MIMEText("""<html>
+  <head>
+    <style>
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+      }
+      .header {
+        background-color: #0078d4;
+        padding: 20px;
+        color: white;
+        text-align: center;
+      }
+      .content {
+        padding: 20px;
+        background-color: #f0f0f0;
+        text-align: center;
+      }
+      .button {
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-bottom: 20px;
+        cursor: pointer;
+      }
+      .button:hover {
+        background-color: #005d9f;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>¡Conversion Exitosa!</h1>
+      </div>
+      <div class="content">
+        <p>Apreciado cliente,</p>
+        <p>Nos complace informarle de que la conversión de su archivo se ha completado y está listo para ser descargado desde nuestro sitio web</p>
+        <p>Gracias por utilizar nuestro servicio. Si tiene alguna pregunta o duda, no dude en ponerse en contacto con nosotros.</p>
+      </div>
+    </div>
+  </body>
+</html>""" , "html")
+
+
+def send_email(email_address):
+    print(email_address)
+    try:
+        context = ssl.create_default_context()
+        server = smtplib.SMTP(MAIL_SERVER, MAIL_PORT)
+        server.starttls(context=context) 
+        server.login(MAIL_USERNAME, MAIL_PASSWORD)
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Conversión completa"
+        message["From"] = MAIL_FROM
+        message["To"] = email_address
+        message.attach(html_message)
+        server.sendmail(MAIL_FROM, email_address, message.as_string())
+
+    except Exception as e:
+        print(e)
+    finally:
+        server.quit()
 
 @shared_task(autoretry_for=(Exception,), max_retries=3 ,default_retry_delay=240, ignore_result=True)
 def process_task(id_task):
@@ -55,6 +139,9 @@ def process_task(id_task):
             
         task.status = Status.PROCESSED.value
         session.commit()
+        
+        email_address = task.user.email
+        # send_email(email_address)
 
         return None
 
