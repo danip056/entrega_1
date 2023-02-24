@@ -79,5 +79,5 @@ services:
         max-file: "3"
     environment:
       - TZ=America/Bogota
-    cpus: 2
+    cpus: 1
     mem_limit: 1024m
