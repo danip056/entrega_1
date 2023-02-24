@@ -59,7 +59,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
-Path.mkdir(STORAGE_DIR, exist_ok=True)
+Path.mkdir(Path(STORAGE_DIR), exist_ok=True)
 
 celery = Celery(
     broker=CELERY_BROKER_URL,
