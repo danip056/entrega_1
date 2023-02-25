@@ -8,6 +8,11 @@ Integrantes:
 
 Video funcionamiento aplicación: 
 
+### Documentación
+* Documento .pdf
+* Las instrucciones de despliegue del frontend y backend se encuentran en los archivos `README.md` en cada carpeta respectivamente.
+* Documento pruebas de Postman se encuentra en el archivo `entregable_1.postman_collection.json`
+
 ### Endpoints abiertos
 ---
 * Login: `POST /api/auth/login`

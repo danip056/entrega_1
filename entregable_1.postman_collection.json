@@ -1,0 +1,290 @@
+{
+	"info": {
+		"_postman_id": "8c5b2e29-acf0-46a3-aba4-5ff4459fba89",
+		"name": "entregable_1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"user\": \"d.pinedae2\",\r\n  \"email\": \"d.pinedae2@uniandes.edu.co\",\r\n  \"password\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host_address}}:{{host_port}}/api/auth/signup",
+					"host": [
+						"{{host_address}}"
+					],
+					"port": "{{host_port}}",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"user_or_email\": \"d.pinedae@uniandes.edu.co\",\r\n  \"password\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host_address}}:{{host_port}}/api/auth/login",
+					"host": [
+						"{{host_address}}"
+					],
+					"port": "{{host_port}}",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/DSP_personal/Maestría/202301_Desarrollo_de_soluciones_cloud/entrega_1/ml-100k.tar.gz"
+						},
+						{
+							"key": "target_file_ext",
+							"value": ".zip",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host_address}}:{{host_port}}/api/tasks",
+					"host": [
+						"{{host_address}}"
+					],
+					"port": "{{host_port}}",
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_tasks",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host_address}}:{{host_port}}/api/tasks",
+					"host": [
+						"{{host_address}}"
+					],
+					"port": "{{host_port}}",
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_task",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host_address}}:{{host_port}}/api/tasks/:id_task",
+					"host": [
+						"{{host_address}}"
+					],
+					"port": "{{host_port}}",
+					"path": [
+						"api",
+						"tasks",
+						":id_task"
+					],
+					"variable": [
+						{
+							"key": "id_task",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_task",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host_address}}:{{host_port}}/api/tasks/:id_task",
+					"host": [
+						"{{host_address}}"
+					],
+					"port": "{{host_port}}",
+					"path": [
+						"api",
+						"tasks",
+						":id_task"
+					],
+					"variable": [
+						{
+							"key": "id_task",
+							"value": "14"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_file",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host_address}}:{{host_port}}/api/files/:filename",
+					"host": [
+						"{{host_address}}"
+					],
+					"port": "{{host_port}}",
+					"path": [
+						"api",
+						"files",
+						":filename"
+					],
+					"variable": [
+						{
+							"key": "filename",
+							"value": "4102cdc29cf245b0b13c13d6bf26d868_2.tar.gz"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJleHAiOjE2NzcyODk2NzV9.9Tun0phcrG9mDVOcIxsoHV_s4mbn2-BZAdEDNgo6WYc",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host_address",
+			"value": "http://107.23.84.196",
+			"type": "default"
+		},
+		{
+			"key": "host_port",
+			"value": "8080",
+			"type": "default"
+		}
+	]
+}
