@@ -38,7 +38,7 @@ class TarGzManager:
     @classmethod
     def decompress(self, file):
         with tarfile.open(fileobj=file, mode="r:gz") as tar_file:
-            output = {name: tar_file.extractfile(name).read() for name in tar_file.getnames()}
+            output = {member.name: tar_file.extractfile(member).read() for member in tar_file.getmembers()}
         return output
 
 
@@ -59,7 +59,7 @@ class TarBz2Manager:
     @classmethod
     def decompress(self, file):
         with tarfile.open(fileobj=file, mode="r:bz2") as tar_file:
-            output = {name: tar_file.extractfile(name).read() for name in tar_file.getnames()}
+            output = {member.name: tar_file.extractfile(member).read() for member in tar_file.getmembers()}
         return output
 
     @classmethod

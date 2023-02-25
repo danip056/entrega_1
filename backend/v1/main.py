@@ -56,7 +56,7 @@ app.add_middleware(
 
 SECRET_KEY = "ultra_secret"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 600
 STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
@@ -168,7 +168,7 @@ async def create_task(
         original_file_ext = CompressionFormat.TAR_GZ.value
     elif file.filename.endswith(CompressionFormat.TAR_BZ2.value):
         original_file_ext = CompressionFormat.TAR_BZ2.value
-        
+
     original_stored_file_name = generate_file_name(
         original_file_ext,
         user_id)
