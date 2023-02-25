@@ -144,7 +144,7 @@ def process_task(id_task):
         session.commit()
         
         email_address = task.user.email
-        # send_email(email_address)
+        send_email(email_address)
 
         return None
 
