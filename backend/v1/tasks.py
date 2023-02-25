@@ -104,7 +104,10 @@ def process_task(id_task):
         task = session.query(Task).get(id_task)
 
         original_stored_file_name = task.original_stored_file_name
-        original_file_ext = CompressionFormat(task.original_file_ext)
+        try:
+          original_file_ext = CompressionFormat(task.original_file_ext)
+        except:
+            original_file_ext = CompressionFormat.UNCOMPRESSED
         target_stored_file_name = task.target_stored_file_name
         target_file_ext = CompressionFormat(task.target_file_ext)
 
@@ -120,7 +123,7 @@ def process_task(id_task):
             elif original_file_ext == CompressionFormat.TAR_BZ2:
                 files_dict = TarBz2Manager.decompress(original_file)
             else:
-                raise Exception("Unhandled file format")
+                files_dict = {original_stored_file_name: original_file.read()}
 
         if target_file_ext == CompressionFormat.ZIP:
             target_file = ZipManager.compress(files_dict)
@@ -129,7 +132,7 @@ def process_task(id_task):
         elif target_file_ext == CompressionFormat.TAR_BZ2:
             target_file = TarBz2Manager.compress(files_dict)
         else:
-            raise Exception("Unhandled file format")
+            target_file = list(files_dict.values())[0]
 
         with open(os.path.join(
             STORAGE_DIR,
@@ -141,7 +144,7 @@ def process_task(id_task):
         session.commit()
         
         email_address = task.user.email
-        send_email(email_address)
+        # send_email(email_address)
 
         return None
 

@@ -168,6 +168,8 @@ async def create_task(
         original_file_ext = CompressionFormat.TAR_GZ.value
     elif file.filename.endswith(CompressionFormat.TAR_BZ2.value):
         original_file_ext = CompressionFormat.TAR_BZ2.value
+    else:
+        _, original_file_ext = os.path.splitext(file.filename)
 
     original_stored_file_name = generate_file_name(
         original_file_ext,

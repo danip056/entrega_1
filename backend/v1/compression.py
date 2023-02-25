@@ -12,6 +12,7 @@ class CompressionFormat(str, Enum):
     # BZIP = ".bzip"
     TAR_GZ = ".tar.gz"
     TAR_BZ2 = ".tar.bz2"
+    UNCOMPRESSED = "uncompressed"
 
 
 # zip
