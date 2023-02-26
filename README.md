@@ -6,10 +6,10 @@ Integrantes:
 
 ## Entrega 1
 
-Video funcionamiento aplicación: 
+Video funcionamiento aplicación: https://youtu.be/Ctk3vgGU-Rc
 
 ### Documentación
-* Documento .pdf
+* Documento con la arquitectura se encuentra en el archivo `Entrega 1 - Arquitectura, conclusiones y consideraciones.pdf`.
 * Las instrucciones de despliegue del frontend y backend se encuentran en los archivos `README.md` en cada carpeta respectivamente.
 * Documento pruebas de Postman se encuentra en el archivo `entregable_1.postman_collection.json`
 
