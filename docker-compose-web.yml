@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:    
+  web:
+    build:
+      context: frontend/
+      dockerfile: ./Dockerfile
+    working_dir: /usr/src/dsc_app/frontend/
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      - REACT_APP_API=localhost:8080/
+
+  api:
+    # image: cloud_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    working_dir: /usr/src/dsc_app/backend/
+    command: sh -c "alembic -c ./v1/alembic.ini upgrade head && uvicorn main:app --reload --host 0.0.0.0 --port 8080"
+    restart: unless-stopped
+    volumes:
+      - ./:/usr/src/dsc_app/
+    env_file:
+      - ./.env.dev
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"
+    environment:
+      - TZ=America/Bogota
+      - ALEMBIC_CONFIG=v1/alembic.ini
+    cpus: 1
+    mem_limit: 1150m
+    ports:
+      - 8080:8080
+    

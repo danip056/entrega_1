@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:    
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: matcher_rabbitmq
+    restart: unless-stopped
+    volumes:
+      - ./rabbitmq/etc/definitions.json:/etc/rabbitmq/definitions.json #cloud_user, cloud_user
+      - ./rabbitmq/etc/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq/data:/var/lib/rabbitmq/mnesia/rabbit@matcher_rabbitmq
+      - ./rabbitmq/logs:/var/log/rabbitmq/log
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      - ./.env.dev
+    environment:
+      - TZ=America/Bogota
+
+  celery:
+    # image: cloud_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    working_dir: /usr/src/dsc_app/backend/
+    command: sh -c "celery --app=v1.celery_config.celery_init:dsc_app worker -B --without-heartbeat --without-gossip --without-mingle --loglevel=INFO"
+    restart: unless-stopped
+    volumes:
+      - nfs-volume:/usr/src/dsc_app/storage
+    env_file:
+      - ./.env.prod
+    depends_on:
+          - rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"
+    environment:
+      - TZ=America/Bogota
+      - BD_URI=postgresql+psycopg2://postgres:postgres@10.0.0.3/dsc
+      - ALEMBIC_CONFIG=v1/alembic_prod.ini
+    cpus: 1
+    mem_limit: 1024m
+
+volumes: 
+  nfs-volume: 
+    driver_opts: 
+      type: "nfs" 
+      o: "addr=0.0.0.0,nfsvers=4"
+      device: ":/var/data/storage"
+      

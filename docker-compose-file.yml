@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+
+  nfs:
+    image: erichough/nfs-server
+    container_name: nfs
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - NFS_EXPORT_0=/storage
+    volumes:
+      - ./storage/:/storage
+    ports:
+      - 2049:2049
+    cap_add:
+      - SYS_ADMIN
