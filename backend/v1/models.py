@@ -33,6 +33,11 @@ class Task(Base):
         TIMESTAMP(),
         nullable=False,
         server_default=func.current_timestamp())
+    converted_at = Column(
+        TIMESTAMP(),
+        nullable=True,
+        default=None,
+    )
     status = Column(
         Enum("uploaded", "processed", name='status_types'),
         default="uploaded",

@@ -36,5 +36,6 @@ class TaskObject(BaseModel):
     target_file_ext: str
     target_stored_file_name: str
     uploaded_at: datetime
+    converted_at: datetime
     status: Status
     

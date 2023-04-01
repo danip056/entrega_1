@@ -13,6 +13,7 @@ import os
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from datetime import datetime, timezone
 
 STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 MAIL_USERNAME = "grupo8cloud@outlook.com"
@@ -141,6 +142,7 @@ def process_task(id_task):
             new_file.write(target_file)
             
         task.status = Status.PROCESSED.value
+        task.converted_at = datetime.now(timezone.utc)
         session.commit()
         
         email_address = task.user.email

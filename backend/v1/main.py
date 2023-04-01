@@ -233,6 +233,7 @@ async def list_tasks(
             "target_file_ext": task.target_file_ext,
             "target_stored_file_name": task.target_stored_file_name,
             "uploaded_at": task.uploaded_at,
+            "converted_at": task.converted_at,
             "status": task.status,
         } for task in task_list]
 
@@ -260,6 +261,7 @@ async def list_tasks(
             "target_file_ext": task.target_file_ext,
             "target_stored_file_name": task.target_stored_file_name,
             "uploaded_at": task.uploaded_at,
+            "converted_at": task.converted_at,
             "status": task.status,
         }
 
