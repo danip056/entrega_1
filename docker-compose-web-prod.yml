@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/usr/src/dsc_app/
-      - nfs-volume:/usr/src/dsc_app/storage
+      - nfs-volume:/usr/src/dsc_app/backend/storage
     env_file:
       - ./.env.prod
     logging:
