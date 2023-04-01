@@ -15,7 +15,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timezone
 
-STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
+STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "storage")
 MAIL_USERNAME = "grupo8cloud@outlook.com"
 MAIL_PASSWORD = "12345678A."
 MAIL_FROM = "grupo8cloud@outlook.com"
