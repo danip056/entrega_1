@@ -42,8 +42,9 @@ services:
       - TZ=America/Bogota
       - BD_URI=postgresql+psycopg2://postgres:postgres@10.0.0.3/dsc
       - ALEMBIC_CONFIG=v1/alembic_prod.ini
+      - CELERY_BROKER_URL=amqp://cloud_user:cloud_user@rabbitmq:5672//
     cpus: 1
-    mem_limit: 1024m
+    mem_limit: 200m
 
 volumes: 
   nfs-volume: 
