@@ -12,7 +12,7 @@ services:
     depends_on:
       - api
     environment:
-      - REACT_APP_API=localhost:8080/
+      - REACT_APP_API=http://35.208.216.189:8080/api
 
   api:
     # image: cloud_app
