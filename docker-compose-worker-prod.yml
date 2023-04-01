@@ -48,6 +48,6 @@ volumes:
   nfs-volume: 
     driver_opts: 
       type: "nfs" 
-      o: "addr=0.0.0.0,nfsvers=4"
-      device: ":/var/data/storage"
+      o: "addr=10.128.0.4,nfsvers=4"
+      device: ":/home/d_pinedae/storage"
       
