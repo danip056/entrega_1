@@ -58,7 +58,7 @@ app.add_middleware(
 SECRET_KEY = "ultra_secret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 600
-STORAGE_DIR = os.path.join(os.path.dirname(__file__), "storage")
+STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "storage")
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
 Path.mkdir(Path(STORAGE_DIR), exist_ok=True)
