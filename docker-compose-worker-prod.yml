@@ -27,6 +27,7 @@ services:
     command: sh -c "celery --app=v1.celery_config.celery_init:dsc_app worker -B --without-heartbeat --without-gossip --without-mingle --loglevel=INFO"
     restart: unless-stopped
     volumes:
+      - ./:/usr/src/dsc_app/
       - nfs-volume:/usr/src/dsc_app/storage
     env_file:
       - ./.env.prod
