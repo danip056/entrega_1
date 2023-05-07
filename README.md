@@ -99,3 +99,12 @@ Requerimientos de la contraseña:
 | Método                     | GET                                               |
 | Retorno                    | Retorna el archivo                                |
 | Parámetros de autorización | Bearer Token.                                     |
+
+
+
+## Entrega 3
+
+Video funcionamiento aplicación: https://youtu.be/alpgrW_Lo3I
+
+### Documentación
+* Documento con la arquitectura se encuentra en el archivo `Entrega 3 - Arquitectura, conclusiones y consideraciones.pdf`.
