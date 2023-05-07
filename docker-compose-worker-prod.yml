@@ -13,8 +13,6 @@ services:
       - ./:/usr/src/dsc_app/
     env_file:
       - ./.env.prod
-    depends_on:
-          - rabbitmq
     logging:
       driver: "json-file"
       options:
