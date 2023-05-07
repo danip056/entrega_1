@@ -2,9 +2,7 @@ version: '3.7'
 
 services:    
   web:
-    build:
-      context: frontend/
-      dockerfile: ./Dockerfile
+    image: us.gcr.io/elegant-cipher-378223/71ba7ed8c967
     working_dir: /usr/src/dsc_app/frontend/
     ports:
       - "80:80"
