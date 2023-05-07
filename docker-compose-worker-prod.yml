@@ -28,7 +28,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/usr/src/dsc_app/
-      - nfs-volume:/usr/src/dsc_app/backend/storage
     env_file:
       - ./.env.prod
     depends_on:
@@ -45,11 +44,4 @@ services:
       - CELERY_BROKER_URL=amqp://cloud_user:cloud_user@rabbitmq:5672//
     cpus: 1
     mem_limit: 200m
-
-volumes: 
-  nfs-volume: 
-    driver_opts: 
-      type: "nfs" 
-      o: "addr=10.128.0.4,nfsvers=4"
-      device: ":/home/d_pinedae/storage"
       
