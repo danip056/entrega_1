@@ -32,6 +32,15 @@ from passlib.context import CryptContext
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from pathlib import Path
 from compression import CompressionFormat
+from file_storage import LocalStorage, CloudStorage
+
+STORAGE_TYPE = os.environ.get("STORAGE_TYPE", "local")
+if STORAGE_TYPE == "local":
+    STORAGE = LocalStorage
+elif STORAGE_TYPE == "cloud":
+    STORAGE = CloudStorage
+else:
+    raise Exception("Invalid storage type")
 
 app = FastAPI(
     title="DSC entrega 1",
@@ -58,7 +67,7 @@ app.add_middleware(
 SECRET_KEY = "ultra_secret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 600
-STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "storage")
+STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "storage")
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
 Path.mkdir(Path(STORAGE_DIR), exist_ok=True)
@@ -152,9 +161,19 @@ def generate_file_name(extension, user_id):
             extension)
     return file_name
 
-async def save_file(file, path):
-    async with aiofiles.open(path, "wb") as new_file:
-        await new_file.write(await file.read())
+def save_file(file, path):
+    with STORAGE(os.path.join(
+        STORAGE_DIR,
+        path), "wb"
+        ) as new_file:
+        new_file.write(file)
+
+def load_file(file_name):
+    with STORAGE(os.path.join(
+        STORAGE_DIR,
+        file_name), "rb"
+        ) as file:
+        return file.read()
 
 @app.post("/tasks", response_model=SuccessResponse)
 async def create_task(
@@ -180,10 +199,9 @@ async def create_task(
         target_file_ext,
         user_id)
 
-
-    await save_file(
-        file, 
-        os.path.join( STORAGE_DIR, original_stored_file_name)
+    save_file(
+        await file.read(), 
+        original_stored_file_name
     )
 
     task_entry = Task(
@@ -298,10 +316,10 @@ async def list_tasks(
     if file_user_id != user_id:
         raise HTTPException(status_code=404, detail="File not found")
 
-    return FileResponse(
-    path=os.path.join(
-        STORAGE_DIR,
-        filename
-    ),
-    filename=filename,
-    )
+    file = load_file(filename)
+    # return the file with the filename
+    return Response(
+        content=file,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": "attachment; filename={}".format(filename)})
+

@@ -14,8 +14,9 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timezone
+from file_storage import LocalStorage, CloudStorage
 
-STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "storage")
+STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "storage")
 MAIL_USERNAME = "grupo8cloud@outlook.com"
 MAIL_PASSWORD = "12345678A."
 MAIL_FROM = "grupo8cloud@outlook.com"
@@ -27,6 +28,13 @@ MAIL_SSL_TLS = False
 USE_CREDENTIALS = True
 VALIDATE_CERTS = True
 
+STORAGE_TYPE = os.environ.get("STORAGE_TYPE", "local")
+if STORAGE_TYPE == "local":
+    STORAGE = LocalStorage
+elif STORAGE_TYPE == "cloud":
+    STORAGE = CloudStorage
+else:
+    raise Exception("Invalid storage type")
 
 html_message = MIMEText("""<html>
   <head>
@@ -112,11 +120,15 @@ def process_task(id_task):
         target_stored_file_name = task.target_stored_file_name
         target_file_ext = CompressionFormat(task.target_file_ext)
 
-        with open(os.path.join(
+
+        print(os.path.join(
+            STORAGE_DIR,
+            original_stored_file_name,
+        ))
+        with STORAGE(os.path.join(
             STORAGE_DIR,
             original_stored_file_name,
         ), "rb") as original_file:
-
             if original_file_ext == CompressionFormat.ZIP:
                 files_dict = ZipManager.decompress(original_file)
             elif original_file_ext == CompressionFormat.TAR_GZ:
@@ -135,10 +147,10 @@ def process_task(id_task):
         else:
             target_file = list(files_dict.values())[0]
 
-        with open(os.path.join(
+        with STORAGE(os.path.join(
             STORAGE_DIR,
-            target_stored_file_name,),
-            "wb") as new_file:
+            target_stored_file_name,), "wb"
+            ) as new_file:
             new_file.write(target_file)
             
         task.status = Status.PROCESSED.value
@@ -146,7 +158,7 @@ def process_task(id_task):
         session.commit()
         
         email_address = task.user.email
-        send_email(email_address)
+        # send_email(email_address)
 
         return None
 

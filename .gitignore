@@ -60,4 +60,5 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-
+# google cloud credentials
+cloud_service_account.json
