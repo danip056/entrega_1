@@ -2,7 +2,7 @@ version: '3.7'
 
 services:    
   web:
-    image: us.gcr.io/elegant-cipher-378223/71ba7ed8c967
+    image: vihlai/frontend-web-1:v1-release
     working_dir: /usr/src/dsc_app/frontend/
     ports:
       - "80:80"
