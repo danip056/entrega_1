@@ -12,3 +12,5 @@ uvicorn==0.20.0
 celery==5.2.7
 passlib==1.7.4
 google-cloud-storage==2.9.0
+google-cloud-pubsub==2.16.1
+celery-pubsub==1.0.2

@@ -27,12 +27,13 @@ from bd_connection import Session
 import os
 from uuid import uuid4
 import aiofiles
-from celery import Celery
+
 from passlib.context import CryptContext
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from pathlib import Path
 from compression import CompressionFormat
 from file_storage import LocalStorage, CloudStorage
+import enum
 
 STORAGE_TYPE = os.environ.get("STORAGE_TYPE", "local")
 if STORAGE_TYPE == "local":
@@ -41,6 +42,28 @@ elif STORAGE_TYPE == "cloud":
     STORAGE = CloudStorage
 else:
     raise Exception("Invalid storage type")
+
+class TaskQueue(enum.Enum):
+    CELERY = "celery"
+    PUBSUB = "pubsub"
+
+
+task_queue = TaskQueue(os.environ.get("TASK_QUEUE", "celery"))
+TOPIC = os.getenv("PUBSUB_TOPIC", "conversion.request")
+SECRET_KEY = "ultra_secret"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 600
+STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "storage")
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+
+if task_queue == TaskQueue.CELERY:
+    from celery import Celery
+    celery = Celery(
+        broker=CELERY_BROKER_URL,
+        backend="rpc://",
+    )
+elif task_queue == TaskQueue.PUBSUB:
+    from pubsub import publish_task
 
 app = FastAPI(
     title="DSC entrega 1",
@@ -64,18 +87,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SECRET_KEY = "ultra_secret"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 600
-STORAGE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "storage")
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-
 Path.mkdir(Path(STORAGE_DIR), exist_ok=True)
-
-celery = Celery(
-    broker=CELERY_BROKER_URL,
-    backend="rpc://",
-)
 
 oauth2_scheme = HTTPBearer()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -217,10 +229,14 @@ async def create_task(
         session.commit()
         id_task = task_entry.id
 
-    celery.send_task(
-        "v1.tasks.process_task",
-        args=[id_task],
-    )
+    if task_queue == TaskQueue.CELERY:
+        celery.send_task(
+            "v1.tasks.process_task",
+            args=[id_task],
+        )
+    elif task_queue == TaskQueue.PUBSUB:
+        publish_task(id_task)
+    
     return {"success": True, "message": "Tarea creada con éxito"}
 
 
