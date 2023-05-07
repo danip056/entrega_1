@@ -43,5 +43,5 @@ services:
       - ALEMBIC_CONFIG=v1/alembic_prod.ini
       - CELERY_BROKER_URL=amqp://cloud_user:cloud_user@rabbitmq:5672//
     cpus: 1
-    mem_limit: 200m
+    mem_limit: 1024m
       
