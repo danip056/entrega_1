@@ -2,9 +2,10 @@ version: '3.7'
 
 services:    
   web:
-    build:
-      context: frontend/
-      dockerfile: ./Dockerfile
+    image: vihlai/frontend-web-1:v1-release
+    # build:
+    #   context: frontend/
+    #   dockerfile: ./Dockerfile
     working_dir: /usr/src/dsc_app/frontend/
     ports:
       - "80:80"
