@@ -13,4 +13,4 @@ FROM base_python as app
 COPY ./backend/requirements.txt ./backend/
 RUN pip install --no-cache-dir -r backend/requirements.txt
 COPY ./ ./
-RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint_worker.sh && chmod +x entrypoint_api.sh 
