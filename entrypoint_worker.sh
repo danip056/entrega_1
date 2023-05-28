@@ -1,2 +1,4 @@
 #!/bin/sh
-cd /usr/src/dsc_app/backend/;celery --app=v1.celery_config.celery_init:dsc_app worker -B --without-heartbeat --without-gossip --without-mingle --loglevel=INFO
+cd /usr/src/dsc_app/backend/
+python /usr/src/dsc_app/health_check.py &
+python v1/pubsub.py

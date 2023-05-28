@@ -24,6 +24,7 @@ def callback(message):
         message.nack()
 
 if __name__ == "__main__":
+    print("Starting subscriber")
     with pubsub_v1.SubscriberClient() as subscriber:
         future = subscriber.subscribe(SUBSCRIPTION_NAME, callback)
         try:
