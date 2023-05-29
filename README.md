@@ -116,3 +116,12 @@ Video funcionamiento aplicación: https://youtu.be/o2vIBhF86aA
 ### Documentación 
 
 Documento con la arquitectura se encuentra en el archivo `Entrega 4 - Arquitectura, conclusiones y consideraciones.pdf`.
+
+
+## Entrega 5
+
+Video funcionamiento aplicación: https://youtu.be/K-G4Fei4RfE
+
+### Documentación
+* Documento con la arquitectura se encuentra en el archivo `Entrega 5 - Arquitectura, conclusiones y consideraciones.pdf`.
+
